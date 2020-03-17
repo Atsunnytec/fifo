@@ -1,6 +1,10 @@
 #ifndef FIFO_H
 #define FIFO_H
 
+// tasks: 
+//  - pop retorna true or false se conseguiu concluir a operação, e o valor vai para um buffer. 
+
+
 #define BUFFER_SIZE 3
 
 template <typename fifo_data>
@@ -30,6 +34,11 @@ public:
         return buffer[head];
     }
 
+    bool isEmpty()
+    {
+        return (head == tail);
+    }
+
 private:
     uint16_t head = 0;
     uint16_t tail = 0;
@@ -55,9 +64,12 @@ void FIFO<fifo_data>::push(fifo_data data)
 template <typename fifo_data>
 fifo_data FIFO<fifo_data>::pop()
 {
-    fifo_data cp = buffer[head];
-    buffer[head] = 0;
-    indexAdd(&head);
+    if (isEmpty() == false)
+    {
+        fifo_data cp = buffer[head];
+        buffer[head] = 0;
+        indexAdd(&head);
+    }
     return cp;
 }
 

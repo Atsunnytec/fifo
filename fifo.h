@@ -3,9 +3,11 @@
 
 // tasks:
 //  - pop retorna true or false se conseguiu concluir a operação, e o valor vai para um buffer.
+//  - no constructor é definido o tamanho do buffer. A library vai ter o ponteiro pronto, mas vai ter que alocar a memória necessária.
+//  - função peekPosition(). Retorna o valor que está em determinada posição do buffer.
+//  - push() pode sobrescrever o valor mais antigo. Nesse caso o head tem que se mover.
 
-
-#define BUFFER_SIZE 3
+#define BUFFER_SIZE 6
 
 template <typename fifo_data>
 
@@ -20,7 +22,7 @@ public:
 
     void push(fifo_data data);
 
-    fifo_data pop();
+    bool pop(fifo_data *);
 
     void clear()
     {
@@ -65,17 +67,17 @@ void FIFO<fifo_data>::push(fifo_data data)
 }
 
 template <typename fifo_data>
-fifo_data FIFO<fifo_data>::pop()
+bool FIFO<fifo_data>::pop(fifo_data *_buffer)
 {
-    fifo_data cp;
     if (isEmpty() == false)
     {
         length--;
-        cp = buffer[head];
+        *_buffer = buffer[head];
         buffer[head] = 0;
         indexAdd(&head);
+        return true;
     }
-    return cp;
+    return false;
 }
 
 #endif

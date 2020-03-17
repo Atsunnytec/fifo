@@ -32,6 +32,21 @@ public:
         tail = 0;
     }
 
+    fifo_data peekPosition(int _pos)
+    {
+        // 0 é a próxima posição a sair do buffer (first in)
+        int cp = head;
+        for (int i = 0; i <= _pos; i++)
+        {
+            cp--;
+            if (cp < 0)
+            {
+                cp = BUFFER_SIZE - 1;
+            }
+        }
+        return buffer[cp];
+    }
+
     fifo_data peek()
     {
         return buffer[head];
@@ -40,6 +55,11 @@ public:
     bool isEmpty()
     {
         return (length == 0);
+    }
+
+    bool isFull()
+    {
+        return (length == BUFFER_SIZE);
     }
 
 private:
@@ -63,7 +83,14 @@ void FIFO<fifo_data>::push(fifo_data data)
 {
     buffer[tail] = data;
     indexAdd(&tail);
-    length++;
+    if (isFull())
+    {
+        indexAdd(&head);
+    }
+    else
+    {
+        length++;
+    }
 }
 
 template <typename fifo_data>

@@ -9,58 +9,29 @@
 
 #define BUFFER_SIZE 6
 
+#include <Arduino.h>
+
 template <typename fifo_data>
 
 class FIFO
 {
 public:
     //constructor:
-    FIFO()
-    {
-        clear();
-    }
+    FIFO();
 
     void push(fifo_data data);
 
     bool pop(fifo_data *);
 
-    void clear()
-    {
-        memset(buffer, 0, sizeof(buffer));
-        length = 0;
-        head = 0;
-        tail = 0;
-    }
+    void clear();
 
-    fifo_data peekPosition(int _pos)
-    {
-        // 0 é a próxima posição a sair do buffer (first in)
-        int cp = head;
-        for (int i = 0; i <= _pos; i++)
-        {
-            cp--;
-            if (cp < 0)
-            {
-                cp = BUFFER_SIZE - 1;
-            }
-        }
-        return buffer[cp];
-    }
+    fifo_data peekPosition(int _pos);
 
-    fifo_data peek()
-    {
-        return buffer[head];
-    }
+    fifo_data peek();
 
-    bool isEmpty()
-    {
-        return (length == 0);
-    }
+    bool isEmpty();
 
-    bool isFull()
-    {
-        return (length == BUFFER_SIZE);
-    }
+    bool isFull();
 
 private:
     uint16_t head = 0;
@@ -68,43 +39,7 @@ private:
     uint16_t length = 0;
     fifo_data buffer[BUFFER_SIZE];
 
-    void indexAdd(uint16_t *index)
-    {
-        *index = *index + 1;
-        if (*index >= BUFFER_SIZE)
-        {
-            *index = 0;
-        }
-    }
+    void indexAdd(uint16_t *index);
 };
-
-template <typename fifo_data>
-void FIFO<fifo_data>::push(fifo_data data)
-{
-    buffer[tail] = data;
-    indexAdd(&tail);
-    if (isFull())
-    {
-        indexAdd(&head);
-    }
-    else
-    {
-        length++;
-    }
-}
-
-template <typename fifo_data>
-bool FIFO<fifo_data>::pop(fifo_data *_buffer)
-{
-    if (isEmpty() == false)
-    {
-        length--;
-        *_buffer = buffer[head];
-        buffer[head] = 0;
-        indexAdd(&head);
-        return true;
-    }
-    return false;
-}
 
 #endif

@@ -6,6 +6,7 @@
 //  - no constructor é definido o tamanho do buffer. A library vai ter o ponteiro pronto, mas vai ter que alocar a memória necessária.
 //  - função peekPosition(). Retorna o valor que está em determinada posição do buffer.
 //  - push() pode sobrescrever o valor mais antigo. Nesse caso o head tem que se mover.
+//  - definir o tamanho do buffer no constructor
 
 #define BUFFER_SIZE 6
 
@@ -20,18 +21,13 @@ public:
     FIFO();
 
     void push(fifo_data data);
-
     bool pop(fifo_data *);
-
     void clear();
+    bool isEmpty();
+    bool isFull();
 
     fifo_data peekPosition(int _pos);
-
     fifo_data peek();
-
-    bool isEmpty();
-
-    bool isFull();
 
 private:
     uint16_t head = 0;

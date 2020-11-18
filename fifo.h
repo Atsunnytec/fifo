@@ -21,7 +21,7 @@ public:
     FIFO(uint16_t);
 
     void push(fifo_data data);
-    bool pop(fifo_data *);
+    bool pop();
     void clear();
     bool isEmpty();
     bool isFull();
@@ -116,12 +116,11 @@ void FIFO<fifo_data>::push(fifo_data data)
 }
 
 template <typename fifo_data>
-bool FIFO<fifo_data>::pop(fifo_data *_buffer)
+bool FIFO<fifo_data>::pop()
 {
     if (isEmpty() == false)
     {
         length--;
-        *_buffer = buffer[head];
         buffer[head] = 0;
         indexAdd(&head);
         return true;

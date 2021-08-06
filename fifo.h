@@ -107,7 +107,7 @@ void FIFO<fifo_data>::push(fifo_data data)
     indexAdd(&tail);
     if (isFull())
     {
-        indexAdd(&head);
+        indexAdd(&head); // sobrescreve último elemento
     }
     else
     {

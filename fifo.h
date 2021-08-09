@@ -29,11 +29,12 @@ public:
     fifo_data peekPosition(int _pos);
     fifo_data peek();
 
+    int32_t count = 0; // count está pública para ser utilizada nas ihms sunnytec
+                // to do: tentar entregar o endereço da variavel count ao invés de deixar ela pública.
 private:
     uint16_t numberOfElements = DEFAULT_NUMBER_OF_ELEMENTS;
     uint16_t head = 0;
     uint16_t tail = 0;
-    uint16_t length = 0;
     fifo_data *buffer;
 
     void indexAdd(uint16_t *index);
@@ -51,7 +52,7 @@ template <typename fifo_data>
 void FIFO<fifo_data>::clear()
 {
     memset(buffer, 0, numberOfElements*sizeof(fifo_data));
-    length = 0;
+    count = 0;
     head = 0;
     tail = 0;
 }
@@ -81,13 +82,13 @@ fifo_data FIFO<fifo_data>::peek()
 template <typename fifo_data>
 bool FIFO<fifo_data>::isEmpty()
 {
-    return (length == 0);
+    return (count == 0);
 }
 
 template <typename fifo_data>
 bool FIFO<fifo_data>::isFull()
 {
-    return (length == numberOfElements);
+    return (count == numberOfElements);
 }
 
 template <typename fifo_data>
@@ -108,10 +109,11 @@ void FIFO<fifo_data>::push(fifo_data data)
     if (isFull())
     {
         indexAdd(&head); // sobrescreve último elemento
+        // to do: retornar erro ao invés de sobrescrever, e deixar as duas opções disponíveis.
     }
     else
     {
-        length++;
+        count++;
     }
 }
 
@@ -120,7 +122,7 @@ bool FIFO<fifo_data>::pop()
 {
     if (isEmpty() == false)
     {
-        length--;
+        count--;
         buffer[head] = 0;
         indexAdd(&head);
         return true;

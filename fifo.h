@@ -123,7 +123,7 @@ bool FIFO<fifo_data>::pop()
     if (isEmpty() == false)
     {
         count--;
-        buffer[head] = 0;
+        // buffer[head] = 0;
         indexAdd(&head);
         return true;
     }

@@ -32,7 +32,7 @@ public:
     int32_t count = 0; // count está pública para ser utilizada nas ihms sunnytec
                 // to do: tentar entregar o endereço da variavel count ao invés de deixar ela pública.
 private:
-    uint16_t numberOfElements = DEFAULT_NUMBER_OF_ELEMENTS;
+    uint16_t maximumNumberOfItems = DEFAULT_NUMBER_OF_ELEMENTS;
     uint16_t head = 0;
     uint16_t tail = 0;
     fifo_data *buffer;
@@ -40,18 +40,19 @@ private:
     void indexAdd(uint16_t *index);
 };
 
+
 template <typename fifo_data>
-FIFO<fifo_data>::FIFO(uint16_t _numberOfElements)
+FIFO<fifo_data>::FIFO(uint16_t _maximumNumberOfItems)
 {
-    numberOfElements = _numberOfElements;
-    buffer = (fifo_data*)malloc(numberOfElements*sizeof(fifo_data));
+    maximumNumberOfItems = _maximumNumberOfItems;
+    buffer = (fifo_data*)malloc(maximumNumberOfItems*sizeof(fifo_data));
     clear();
 }
 
 template <typename fifo_data>
 void FIFO<fifo_data>::clear()
 {
-    memset(buffer, 0, numberOfElements*sizeof(fifo_data));
+    memset(buffer, 0, maximumNumberOfItems*sizeof(fifo_data));
     count = 0;
     head = 0;
     tail = 0;
@@ -62,12 +63,12 @@ fifo_data FIFO<fifo_data>::peekPosition(int _pos)
 {
     // 0 é a próxima posição a sair do buffer (first in)
     int cp = head;
-    for (int i = 0; i <= _pos; i++)
+    for (int i = 0; i < _pos; i++)
     {
         cp--;
         if (cp < 0)
         {
-            cp = numberOfElements - 1;
+            cp = maximumNumberOfItems - 1;
         }
     }
     return buffer[cp];
@@ -88,14 +89,14 @@ bool FIFO<fifo_data>::isEmpty()
 template <typename fifo_data>
 bool FIFO<fifo_data>::isFull()
 {
-    return (count == numberOfElements);
+    return (count == maximumNumberOfItems);
 }
 
 template <typename fifo_data>
 void FIFO<fifo_data>::indexAdd(uint16_t *index)
 {
     *index = *index + 1;
-    if (*index >= numberOfElements)
+    if (*index >= maximumNumberOfItems)
     {
         *index = 0;
     }

@@ -65,10 +65,10 @@ fifo_data FIFO<fifo_data>::peekPosition(int _pos)
     int cp = head;
     for (int i = 0; i < _pos; i++)
     {
-        cp--;
-        if (cp < 0)
+        cp++;
+        if (cp >= maximumNumberOfItems)
         {
-            cp = maximumNumberOfItems - 1;
+            cp = 0;
         }
     }
     return buffer[cp];

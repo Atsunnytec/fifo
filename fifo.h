@@ -17,11 +17,12 @@ template <typename fifo_data>
 class FIFO
 {
 public:
-    //constructor:
+    // constructor:
     FIFO(uint16_t);
 
     void push(fifo_data data);
     bool pop();
+    bool popPosition(int _pos);
     void clear();
     bool isEmpty();
     bool isFull();
@@ -30,48 +31,32 @@ public:
     fifo_data peek();
 
     int32_t count = 0; // count está pública para ser utilizada nas ihms sunnytec
-                // to do: tentar entregar o endereço da variavel count ao invés de deixar ela pública.
+                       // to do: tentar entregar o endereço da variavel count ao invés de deixar ela pública.
 private:
     uint16_t maximumNumberOfItems = DEFAULT_NUMBER_OF_ELEMENTS;
-    uint16_t head = 0;
-    uint16_t tail = 0;
+    int16_t head = 0;
+    int16_t tail = 0;
     fifo_data *buffer;
 
-    void indexAdd(uint16_t *index);
+    void indexAdd(int16_t *index);
+    void indexSub(int16_t *index);
 };
-
 
 template <typename fifo_data>
 FIFO<fifo_data>::FIFO(uint16_t _maximumNumberOfItems)
 {
     maximumNumberOfItems = _maximumNumberOfItems;
-    buffer = (fifo_data*)malloc(maximumNumberOfItems*sizeof(fifo_data));
+    buffer = (fifo_data *)malloc(maximumNumberOfItems * sizeof(fifo_data));
     clear();
 }
 
 template <typename fifo_data>
 void FIFO<fifo_data>::clear()
 {
-    memset(buffer, 0, maximumNumberOfItems*sizeof(fifo_data));
+    memset(buffer, 0, maximumNumberOfItems * sizeof(fifo_data));
     count = 0;
     head = 0;
     tail = 0;
-}
-
-template <typename fifo_data>
-fifo_data FIFO<fifo_data>::peekPosition(int _pos)
-{
-    // 0 é a próxima posição a sair do buffer (first in)
-    int cp = head;
-    for (int i = 0; i < _pos; i++)
-    {
-        cp++;
-        if (cp >= maximumNumberOfItems)
-        {
-            cp = 0;
-        }
-    }
-    return buffer[cp];
 }
 
 template <typename fifo_data>
@@ -93,12 +78,22 @@ bool FIFO<fifo_data>::isFull()
 }
 
 template <typename fifo_data>
-void FIFO<fifo_data>::indexAdd(uint16_t *index)
+void FIFO<fifo_data>::indexAdd(int16_t *index)
 {
     *index = *index + 1;
     if (*index >= maximumNumberOfItems)
     {
         *index = 0;
+    }
+}
+
+template <typename fifo_data>
+void FIFO<fifo_data>::indexSub(int16_t *index)
+{
+    *index = *index - 1;
+    if (*index < 0)
+    {
+        *index = maximumNumberOfItems - 1;
     }
 }
 
@@ -125,6 +120,50 @@ bool FIFO<fifo_data>::pop()
     {
         count--;
         // buffer[head] = 0;
+        indexAdd(&head);
+        return true;
+    }
+    return false;
+}
+
+template <typename fifo_data>
+fifo_data FIFO<fifo_data>::peekPosition(int _pos)
+{
+    // 0 é a próxima posição a sair do buffer (first in)
+    int cp = head;
+    for (int i = 0; i < _pos; i++)
+    {
+        cp++;
+        if (cp >= maximumNumberOfItems)
+        {
+            // to do: trocar por indexAdd()
+            cp = 0;
+        }
+    }
+    return buffer[cp];
+}
+
+template <typename fifo_data>
+bool FIFO<fifo_data>::popPosition(int _pos)
+{
+    if (isEmpty() == false)
+    {
+        int16_t cp = head;
+        for (int i = 0; i < _pos; i++)
+        {
+            indexAdd(&cp);
+        }
+
+        int16_t cp2 = cp;
+        indexSub(&cp2);
+        for (int i = 0; i < _pos; i++)
+        {
+            buffer[cp] = buffer[cp2];
+            indexSub(&cp2);
+            indexSub(&cp);
+        }
+        // buffer[head] = 0;
+        count--;
         indexAdd(&head);
         return true;
     }
